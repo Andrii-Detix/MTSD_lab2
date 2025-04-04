@@ -233,6 +233,30 @@ public class MyList<T>
         return elements.ToArray();
     }
     
+    public void Reverse()
+    {
+        if (_head is null) return;
+        
+        Node<T> current = _head;
+        Node<T> previous = _tail!;
+        Node<T> next = current.Next!;
+
+        int counter = 0;
+
+        while (!(current == _head && counter != 0))
+        {
+            current.SetNext(previous);
+            
+            previous = current;
+            current = next!;
+            next = next.Next!;
+            counter++;
+        }
+
+        _head = _tail;
+        _tail = current;
+    }
+    
     private void AddHeadIfNull(T value)
     {
         if (_head is not null) throw new HeadIsNotNullException();
