@@ -118,6 +118,25 @@ public class MyList<T>
         throw new IndexOfElementOutOfRangeException();
     }
     
+    public int FindFirst(T value)
+    {
+        if (_head is null) return -1;
+
+        int index = 0;
+        Node<T> current = _head;
+
+        while (!EqualityComparer<T>.Default.Equals(current.Value, value))
+        {
+            current = current.Next!;
+            index++;
+
+            bool isCompletedLoop = current == _head && index != 0;
+            if (isCompletedLoop) return -1;
+        }
+        
+        return index;
+    }
+    
     private void AddHeadIfNull(T value)
     {
         if (_head is not null) throw new HeadIsNotNullException();
