@@ -263,6 +263,12 @@ public class MyList<T>
         _tail = current;
     }
     
+    public MyList<T> Clone()
+    {
+        T[] arrayOfElements = ToArray();
+        return new MyList<T>(arrayOfElements);
+    }
+    
     private void AppendSome(params T[] elements)
     {
         if (elements.Length == 0) return;
