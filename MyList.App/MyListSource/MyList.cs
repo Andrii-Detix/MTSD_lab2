@@ -56,12 +56,32 @@ public class MyList<T>
     
     public int FindFirst(T value)
     {
-        throw new Exception();
+        for (int i = 0; i < _size; i++)
+        {
+            T item = _items[i];
+
+            if (EqualityComparer<T>.Default.Equals(item, value))
+            {
+                return i;
+            }
+        }
+
+        return -1;
     }
     
     public int FindLast(T value)
     {
-        throw new Exception();
+        for (int i = _size - 1; i >= 0; i--)
+        {
+            T item = _items[i];
+
+            if (EqualityComparer<T>.Default.Equals(item, value))
+            {
+                return i;
+            }
+        }
+
+        return -1;
     }
     
     public T Delete(int index)
