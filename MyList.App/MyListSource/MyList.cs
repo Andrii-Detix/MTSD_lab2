@@ -216,6 +216,23 @@ public class MyList<T>
         }
     }
     
+    public T[] ToArray()
+    {
+        if (_head is null) return new T[0];
+        
+        Node<T> current = _head;
+        List<T> elements = new List<T>();
+
+        do
+        {
+            elements.Add(current.Value);
+            current = current.Next!;
+        } 
+        while (current != _head);
+        
+        return elements.ToArray();
+    }
+    
     private void AddHeadIfNull(T value)
     {
         if (_head is not null) throw new HeadIsNotNullException();
