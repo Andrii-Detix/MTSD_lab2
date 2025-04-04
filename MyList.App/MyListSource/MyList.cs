@@ -195,24 +195,29 @@ public class MyList<T>
         Node<T> previous = _tail!;
 
         bool isCompletedLoop = false;
-        int counter = 0;
+        bool outOfFirstHead = false;
         
         while (!isCompletedLoop && _head is not null)
         {
             if (EqualityComparer<T>.Default.Equals(current.Value, value))
             {
                 DeleteNode(previous, current);
+
                 current = previous.Next!;
+
+                if (!outOfFirstHead)
+                {
+                    outOfFirstHead = current != _head;
+                }
             }
             else
             {
                 previous = current;
                 current = current.Next!;
+                outOfFirstHead = true;
             }
-
-            counter++;
             
-            isCompletedLoop = current == _head && counter != 0;
+            isCompletedLoop = current == _head && outOfFirstHead;
         }
     }
     
