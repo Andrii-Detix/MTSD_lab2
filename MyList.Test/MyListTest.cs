@@ -59,4 +59,48 @@ public class MyListTest
 
         getWithIndexLowerThanZero.Should().Throw<IndexOfElementOutOfRangeException>();
     }
+    
+    [Fact]
+    public void Append_Should_AddElementToTheEndOfList()
+    {
+        MyList<char> list = new MyList<char>();
+
+        list.Append('a');
+        list.Append('b');
+        list.Append('c');
+
+        list.Length().Should().Be(3);
+        list.Get(0).Should().Be('a');
+        list.Get(1).Should().Be('b');
+        list.Get(2).Should().Be('c');
+    }
+
+    [Fact]
+    public void Insert_Should_AddElementByTheGivenIndex_When_IndexIsValid()
+    {
+        MyList<char> list = new MyList<char>('a', 'b');
+
+        list.Insert('1', 0);
+        list.Insert('2', 1);
+        list.Insert('4', 4);
+
+        list.Length().Should().Be(5);
+        list.Get(0).Should().Be('1');
+        list.Get(1).Should().Be('2');
+        list.Get(2).Should().Be('a');
+        list.Get(3).Should().Be('b');
+        list.Get(4).Should().Be('4');
+    }
+
+    [Fact]
+    public void Insert_Should_ThrowIndexOfElementOutOfRangeException_When_IndexIsInvalid()
+    {
+        MyList<char> list = new MyList<char>('a', 'b', 'c');
+
+        Action insertByIndexHigherThanSizeOfList = () => list.Insert('!', 5);
+        Action insertByIndexLowerThanZero = () => list.Insert('1', -1);
+
+        insertByIndexHigherThanSizeOfList.Should().Throw<IndexOfElementOutOfRangeException>();
+        insertByIndexLowerThanZero.Should().Throw<IndexOfElementOutOfRangeException>();
+    }
 }
