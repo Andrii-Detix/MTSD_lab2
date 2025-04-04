@@ -86,7 +86,22 @@ public class MyList<T>
     
     public T Delete(int index)
     {
-        throw new Exception();
+        if (index < 0 || index >= _size) throw new IndexOfElementOutOfRangeException();
+
+        T item = _items[index];
+
+        for (int i = index; i < _size - 1; i++)
+        {
+            _items[i] = _items[i + 1];
+        }
+
+        _items[_size - 1] = default!;
+
+        _size--;
+        
+        TryReduceCapacity();
+        
+        return item;
     }
     
     public void DeleteAll(T value)
@@ -128,9 +143,23 @@ public class MyList<T>
         }
     }
     
+    private void TryReduceCapacity()
+    {
+        if (IsSizeSmallerThanQuarterOfCapacity())
+        {
+            int newCapacity = _size * 2;
+            ChangeCapacity(newCapacity);
+        }
+    }
+    
     private bool IsFull()
     {
         return _size == _items.Length;
+    }
+    
+    private bool IsSizeSmallerThanQuarterOfCapacity()
+    {
+        return _size < _items.Length / 4;
     }
     
     private void ChangeCapacity(int capacity)
