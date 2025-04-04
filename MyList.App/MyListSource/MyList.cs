@@ -173,7 +173,26 @@ public class MyList<T>
     
     public void Extend(MyList<T> list)
     {
-        throw new Exception();
+        int newSize = _size + list.Length();
+
+        T[] newItems = _items;
+
+        if (newSize > _items.Length)
+        {
+            newItems = new T[newSize];
+
+            for (int i = 0; i < _size; i++)
+            {
+                newItems[i] = _items[i];
+            }
+        }
+
+        for (int i = _size, j = 0; i < newSize; i++, j++)
+        {
+            newItems[i] = list.Get(j);
+        }
+
+        _items = newItems;
     }
     
     private void TryIncreaseCapacity()
