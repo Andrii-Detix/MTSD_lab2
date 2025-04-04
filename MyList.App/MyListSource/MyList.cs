@@ -193,6 +193,7 @@ public class MyList<T>
         }
 
         _items = newItems;
+        _size = newSize;
     }
     
     private void TryIncreaseCapacity()
