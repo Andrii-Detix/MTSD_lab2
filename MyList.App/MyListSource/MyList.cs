@@ -7,9 +7,9 @@ public class MyList<T>
     private Node<T>? _head;
     private Node<T>? _tail;
 
-    public MyList(T value)
+    public MyList(params T[] values)
     {
-        AddHeadIfNull(value);
+        AppendSome(values);
     }
 
     public MyList()
@@ -224,7 +224,7 @@ public class MyList<T>
     
     public T[] ToArray()
     {
-        if (_head is null) return new T[0];
+        if (_head is null) return [];
         
         Node<T> current = _head;
         List<T> elements = new List<T>();
@@ -263,7 +263,37 @@ public class MyList<T>
         _tail = current;
     }
     
-    
+    private void AppendSome(params T[] elements)
+    {
+        if (elements.Length == 0) return;
+
+        int index = 0;
+        
+        Node<T> first = new Node<T>(elements[0]);
+        Node<T> current = first;
+
+        index++;
+
+        for (; index < elements.Length; index++)
+        {
+            Node<T> temporary = current;
+            current = new Node<T>(elements[index]);
+            temporary.SetNext(current);
+        }
+
+        if (_tail is null)
+        {
+            _head = first;
+            _tail = current;
+        }
+        else
+        {
+            _tail.SetNext(first);
+            _tail = current;
+        }
+        
+        _tail.SetNext(_head!);
+    }
     
     private void AddHeadIfNull(T value)
     {
