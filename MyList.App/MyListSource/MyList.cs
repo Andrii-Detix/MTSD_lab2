@@ -269,6 +269,12 @@ public class MyList<T>
         return new MyList<T>(arrayOfElements);
     }
     
+    public void Extend(MyList<T> list)
+    {
+        T[] extendedArray = list.ToArray();
+        AppendSome(extendedArray);
+    }
+    
     private void AppendSome(params T[] elements)
     {
         if (elements.Length == 0) return;
