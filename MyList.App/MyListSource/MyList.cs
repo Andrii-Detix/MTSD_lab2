@@ -16,6 +16,22 @@ public class MyList<T>
     {
     }
     
+    public int Length()
+    {
+        if (_head is null) return 0;
+        
+        int counter = 0;
+        Node<T> current = _head!;
+
+        do
+        {
+            counter++;
+            current = current.Next!;
+        } while (current != _head);
+
+        return counter;
+    }
+    
     private void AddHeadIfNull(T value)
     {
         if (_head is not null) throw new HeadIsNotNullException();
