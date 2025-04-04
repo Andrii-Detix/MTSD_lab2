@@ -187,6 +187,35 @@ public class MyList<T>
         return current.Value;
     }
     
+    public void DeleteAll(T value)
+    {
+        if (_head is null) return;
+        
+        Node<T> current = _head;
+        Node<T> previous = _tail!;
+
+        bool isCompletedLoop = false;
+        int counter = 0;
+        
+        while (!isCompletedLoop && _head is not null)
+        {
+            if (EqualityComparer<T>.Default.Equals(current.Value, value))
+            {
+                DeleteNode(previous, current);
+                current = previous.Next!;
+            }
+            else
+            {
+                previous = current;
+                current = current.Next!;
+            }
+
+            counter++;
+            
+            isCompletedLoop = current == _head && counter != 0;
+        }
+    }
+    
     private void AddHeadIfNull(T value)
     {
         if (_head is not null) throw new HeadIsNotNullException();
