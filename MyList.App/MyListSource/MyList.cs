@@ -135,12 +135,20 @@ public class MyList<T>
     
     public void Clear()
     {
-        throw new Exception();
+        _size = 0;
+        _items = new T[DefaultCapacity];
     }
     
     public T[] ToArray()
     {
-        throw new Exception();
+        T[] array = new T[_size];
+
+        for (int i = 0; i < _size; i++)
+        {
+            array[i] = _items[i];
+        }
+
+        return array;
     }
     
     public void Reverse()
