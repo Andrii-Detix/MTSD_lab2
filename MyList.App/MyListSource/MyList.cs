@@ -32,6 +32,26 @@ public class MyList<T>
         return counter;
     }
     
+    public void Append(T value)
+    {
+        if (_head is null)
+        {
+            AddHeadIfNull(value);
+            return;
+        }
+
+        Node<T> node = new Node<T>(value, _head);
+        Node<T> current = _head;
+
+        while (current.Next != _head)
+        {
+            current = current.Next!;
+        }
+
+        current.SetNext(node);
+        _tail = node;
+    }
+    
     private void AddHeadIfNull(T value)
     {
         if (_head is not null) throw new HeadIsNotNullException();
