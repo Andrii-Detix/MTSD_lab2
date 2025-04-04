@@ -216,6 +216,12 @@ public class MyList<T>
         }
     }
     
+    public void Clear()
+    {
+        _head = null;
+        _tail = null;
+    }
+    
     public T[] ToArray()
     {
         if (_head is null) return new T[0];
@@ -256,6 +262,8 @@ public class MyList<T>
         _head = _tail;
         _tail = current;
     }
+    
+    
     
     private void AddHeadIfNull(T value)
     {
