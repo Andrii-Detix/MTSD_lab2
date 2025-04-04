@@ -4,12 +4,15 @@ namespace MyList.App.MyListSource;
 
 public class MyList<T>
 {
-    private Node<T>? _head;
-    private Node<T>? _tail;
+    private const int DefaultCapacity = 4;
 
+    private T[] _items = new T[DefaultCapacity];
+    private int _size = 0;
+    
     public MyList(params T[] values)
     {
-        AppendSome(values);
+        _items = values;
+        _size = values.Length;
     }
 
     public MyList()
@@ -18,330 +21,230 @@ public class MyList<T>
     
     public int Length()
     {
-        if (_head is null) return 0;
-        
-        int counter = 0;
-        Node<T> current = _head!;
-
-        do
-        {
-            counter++;
-            current = current.Next!;
-        } while (current != _head);
-
-        return counter;
+        return _size;
     }
     
     public T Get(int index)
     {
-        if (index < 0 || _head is null) throw new IndexOfElementOutOfRangeException();
+        if (index < 0 || index >= _size) throw new IndexOfElementOutOfRangeException();
 
-        int counter = 0;
-        Node<T> current = _head;
-
-        while (counter != index)
-        {
-            current = current.Next!;
-            counter++;
-
-            bool isCompletedLoop = current == _head && counter != 0;
-            if (isCompletedLoop) throw new IndexOfElementOutOfRangeException();
-        }
-
-        return current.Value;
+        return _items[index];
     }
     
     public void Append(T value)
     {
-        if (_head is null)
-        {
-            AddHeadIfNull(value);
-            return;
-        }
+        TryIncreaseCapacity();
 
-        Node<T> node = new Node<T>(value, _head);
-        Node<T> current = _head;
-
-        while (current.Next != _head)
-        {
-            current = current.Next!;
-        }
-
-        current.SetNext(node);
-        _tail = node;
+        _items[_size] = value;
+        _size++;
     }
     
     public void Insert(T value, int index)
     {
-        if (index < 0) throw new IndexOfElementOutOfRangeException();
+        if (index < 0 || index > _size) throw new IndexOfElementOutOfRangeException();
 
-        if (_head is null)
+        TryIncreaseCapacity();
+
+        for (int i = _size - 1; i >= index; i--)
         {
-            if (index != 0) throw new IndexOfElementOutOfRangeException();
-
-            AddHeadIfNull(value);
-            return;
+            _items[i + 1] = _items[i];
         }
 
-        int counter = 0;
-        Node<T> current = _head!;
-        Node<T> previous = _tail!;
-
-        while (true)
-        {
-            bool isCompletedLoop = current == _head && counter != 0;
-            
-            if (counter == index)
-            {
-                Node<T> node = new Node<T>(value, current);
-                previous.SetNext(node);
-
-                if (counter == 0)
-                {
-                    _head = node;
-                }
-                else if (isCompletedLoop)
-                {
-                    _tail = node;
-                }
-                
-                return;
-            }
-            
-            if (isCompletedLoop) break;
-
-            counter++;
-            previous = current;
-            current = current.Next!;
-        }
-
-        throw new IndexOfElementOutOfRangeException();
+        _items[index] = value;
+        _size++;
     }
     
     public int FindFirst(T value)
     {
-        const int badIndex = -1;
-        
-        if (_head is null) return badIndex;
-
-        int index = 0;
-        Node<T> current = _head;
-
-        while (!EqualityComparer<T>.Default.Equals(current.Value, value))
+        for (int i = 0; i < _size; i++)
         {
-            current = current.Next!;
-            index++;
+            T item = _items[i];
 
-            bool isCompletedLoop = current == _head && index != 0;
-            if (isCompletedLoop) return badIndex;
+            if (EqualityComparer<T>.Default.Equals(item, value))
+            {
+                return i;
+            }
         }
-        
-        return index;
+
+        return -1;
     }
     
     public int FindLast(T value)
     {
-        const int badIndex = -1;
-        
-        if (_head is null) return badIndex;
-
-        int index = badIndex;
-        int count = 0;
-        
-        Node<T> current = _head;
-
-        while (!(current == _head && count != 0))
+        for (int i = _size - 1; i >= 0; i--)
         {
-            if (EqualityComparer<T>.Default.Equals(current.Value, value))
+            T item = _items[i];
+
+            if (EqualityComparer<T>.Default.Equals(item, value))
             {
-                index = count;
+                return i;
             }
-            
-            current = current.Next!;
-            count++;
         }
-        
-        return index;
+
+        return -1;
     }
     
     public T Delete(int index)
     {
-        if (index < 0 || _head is null) throw new IndexOfElementOutOfRangeException();
-        
-        int counter = 0;
-        Node<T> current = _head!;
-        Node<T> previous = _tail!;
+        if (index < 0 || index >= _size) throw new IndexOfElementOutOfRangeException();
 
-        while (counter != index)
+        T item = _items[index];
+
+        for (int i = index; i < _size - 1; i++)
         {
-            previous = current;
-            current = current.Next!;
-            counter++;
-
-            bool isCompletedLoop = current == _head && counter != 0;
-            if (isCompletedLoop) throw new IndexOfElementOutOfRangeException();
+            _items[i] = _items[i + 1];
         }
+
+        _items[_size - 1] = default!;
+
+        _size--;
         
-        DeleteNode(previous, current);
+        TryReduceCapacity();
         
-        return current.Value;
+        return item;
     }
     
     public void DeleteAll(T value)
     {
-        if (_head is null) return;
-        
-        Node<T> current = _head;
-        Node<T> previous = _tail!;
+        int counter = 0;
+        int freeIndex = 0;
 
-        bool isCompletedLoop = false;
-        bool outOfFirstHead = false;
-        
-        while (!isCompletedLoop && _head is not null)
+        for (int i = 0; i < _size; i++)
         {
-            if (EqualityComparer<T>.Default.Equals(current.Value, value))
-            {
-                DeleteNode(previous, current);
+            T item = _items[i];
 
-                current = previous.Next!;
-
-                if (!outOfFirstHead)
-                {
-                    outOfFirstHead = current != _head;
-                }
-            }
-            else
+            if (EqualityComparer<T>.Default.Equals(item, value))
             {
-                previous = current;
-                current = current.Next!;
-                outOfFirstHead = true;
+                counter++;
+                continue;
             }
-            
-            isCompletedLoop = current == _head && outOfFirstHead;
+
+            if (i > freeIndex)
+            {
+                _items[freeIndex] = item;
+            }
+
+            freeIndex++;
         }
+
+        ClearArray(freeIndex, counter);
+        _size -= counter;
+        
+        TryReduceCapacity();
     }
     
     public void Clear()
     {
-        _head = null;
-        _tail = null;
+        _size = 0;
+        _items = new T[DefaultCapacity];
     }
     
     public T[] ToArray()
     {
-        if (_head is null) return [];
-        
-        Node<T> current = _head;
-        List<T> elements = new List<T>();
+        T[] array = new T[_size];
 
-        do
+        for (int i = 0; i < _size; i++)
         {
-            elements.Add(current.Value);
-            current = current.Next!;
-        } 
-        while (current != _head);
-        
-        return elements.ToArray();
+            array[i] = _items[i];
+        }
+
+        return array;
     }
     
     public void Reverse()
     {
-        if (_head is null) return;
-        
-        Node<T> current = _head;
-        Node<T> previous = _tail!;
-        Node<T> next = current.Next!;
+        int middleSeparator = _size / 2;
 
-        int counter = 0;
-
-        while (!(current == _head && counter != 0))
+        for (int i = 0; i < middleSeparator; i++)
         {
-            current.SetNext(previous);
-            
-            previous = current;
-            current = next!;
-            next = next.Next!;
-            counter++;
-        }
+            T itemFromHead = _items[i];
+            int indexFromTail = _size - i - 1;
 
-        _head = _tail;
-        _tail = current;
+            _items[i] = _items[indexFromTail];
+            _items[indexFromTail] = itemFromHead;
+        }
     }
     
     public MyList<T> Clone()
     {
-        T[] arrayOfElements = ToArray();
-        return new MyList<T>(arrayOfElements);
+        T[] itemsArray = ToArray();
+        return new MyList<T>(itemsArray);
     }
     
     public void Extend(MyList<T> list)
     {
-        T[] extendedArray = list.ToArray();
-        AppendSome(extendedArray);
+        int newSize = _size + list.Length();
+
+        T[] newItems = _items;
+
+        if (newSize > _items.Length)
+        {
+            newItems = new T[newSize];
+
+            for (int i = 0; i < _size; i++)
+            {
+                newItems[i] = _items[i];
+            }
+        }
+
+        for (int i = _size, j = 0; i < newSize; i++, j++)
+        {
+            newItems[i] = list.Get(j);
+        }
+
+        _items = newItems;
+        _size = newSize;
     }
     
-    private void AppendSome(params T[] elements)
+    private void TryIncreaseCapacity()
     {
-        if (elements.Length == 0) return;
-
-        int index = 0;
-        
-        Node<T> first = new Node<T>(elements[0]);
-        Node<T> current = first;
-
-        index++;
-
-        for (; index < elements.Length; index++)
+        if (IsFull())
         {
-            Node<T> temporary = current;
-            current = new Node<T>(elements[index]);
-            temporary.SetNext(current);
+            int capacity = _size * 2;
+            ChangeCapacity(capacity);
         }
-
-        if (_tail is null)
-        {
-            _head = first;
-            _tail = current;
-        }
-        else
-        {
-            _tail.SetNext(first);
-            _tail = current;
-        }
-        
-        _tail.SetNext(_head!);
     }
     
-    private void AddHeadIfNull(T value)
+    private void TryReduceCapacity()
     {
-        if (_head is not null) throw new HeadIsNotNullException();
-
-        Node<T> node = new Node<T>(value);
-        node.SetNext(node);
-
-        _head = node;
-        _tail = node;
+        if (IsSizeSmallerThanQuarterOfCapacity())
+        {
+            int newCapacity = _size * 2;
+            ChangeCapacity(newCapacity);
+        }
     }
     
-    private void DeleteNode(Node<T> previous, Node<T> node)
+    private bool IsFull()
     {
-        bool isHead = node == _head;
-        bool isTail = node == _tail;
+        return _size == _items.Length;
+    }
+    
+    private bool IsSizeSmallerThanQuarterOfCapacity()
+    {
+        return _size < _items.Length / 4;
+    }
+    
+    private void ChangeCapacity(int capacity)
+    {
+        if (capacity < _size) return;
         
-        previous.SetNext(node.Next!);
-        
-        if (isHead && isTail)
+        T[] newItems = new T[capacity];
+
+        for (int i = 0; i < _size; i++)
         {
-            _head = null;
-            _tail = null;
+            newItems[i] = _items[i];
         }
-        else if(isHead)
+
+        _items = newItems;
+    }
+    
+    private void ClearArray(int startIndex, int length)
+    {
+        int limit = startIndex + length;
+
+        for (int i = startIndex; i < limit && i < _items.Length; i++)
         {
-            _head = node.Next!;
-        }
-        else if (isTail)
-        {
-            _tail = previous;
+            _items[i] = default!;
         }
     }
 }
