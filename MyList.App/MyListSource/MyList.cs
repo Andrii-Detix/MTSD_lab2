@@ -137,6 +137,31 @@ public class MyList<T>
         return index;
     }
     
+    public int FindLast(T value)
+    {
+        const int badIndex = -1;
+        
+        if (_head is null) return badIndex;
+
+        int index = badIndex;
+        int count = 0;
+        
+        Node<T> current = _head;
+
+        while (!(current == _head && count != 0))
+        {
+            if (EqualityComparer<T>.Default.Equals(current.Value, value))
+            {
+                index = count;
+            }
+            
+            current = current.Next!;
+            count++;
+        }
+        
+        return index;
+    }
+    
     private void AddHeadIfNull(T value)
     {
         if (_head is not null) throw new HeadIsNotNullException();
