@@ -179,4 +179,39 @@ public class MyListTest
 
         list.FindFirst('1').Should().Be(-1);
     }
+    
+    [Fact]
+    public void DeleteAll_Should_DeleteAllElementsWithGivenValue()
+    {
+        MyList<char> list = new MyList<char>('a', 'a', 'b', 'a', 'b', 'c', 'a');
+
+        list.DeleteAll('a');
+
+        list.Length().Should().Be(3);
+        list.FindFirst('a').Should().Be(-1);
+        list.Get(0).Should().Be('b');
+        list.Get(1).Should().Be('b');
+        list.Get(2).Should().Be('c');
+
+
+        list.DeleteAll('b');
+        list.DeleteAll('c');
+
+        list.Length().Should().Be(0);
+        list.FindFirst('b').Should().Be(-1);
+        list.FindLast('c').Should().Be(-1);
+    }
+
+    [Fact]
+    public void Clear_Should_ClearListOfElements()
+    {
+        MyList<char> list = new MyList<char>('a', 'a', 'b', 'a', 'b', 'c', 'a');
+
+        list.Clear();
+
+        list.Length().Should().Be(0);
+        list.FindFirst('a').Should().Be(-1);
+        list.FindLast('b').Should().Be(-1);
+        list.FindFirst('c').Should().Be(-1);
+    }
 }
