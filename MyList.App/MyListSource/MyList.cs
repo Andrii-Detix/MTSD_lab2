@@ -52,6 +52,53 @@ public class MyList<T>
         _tail = node;
     }
     
+    public void Insert(T value, int index)
+    {
+        if (index < 0) throw new IndexOfElementOutOfRangeException();
+
+        if (_head is null)
+        {
+            if (index != 0) throw new IndexOfElementOutOfRangeException();
+
+            AddHeadIfNull(value);
+            return;
+        }
+
+        int counter = 0;
+        Node<T> current = _head!;
+        Node<T> previous = _tail!;
+
+        while (true)
+        {
+            bool isCompletedLoop = current == _head && counter != 0;
+            
+            if (counter == index)
+            {
+                Node<T> node = new Node<T>(value, current);
+                previous.SetNext(node);
+
+                if (counter == 0)
+                {
+                    _head = node;
+                }
+                else if (isCompletedLoop)
+                {
+                    _tail = node;
+                }
+                
+                return;
+            }
+            
+            if (isCompletedLoop) break;
+
+            counter++;
+            previous = current;
+            current = current.Next!;
+        }
+
+        throw new IndexOfElementOutOfRangeException();
+    }
+    
     private void AddHeadIfNull(T value)
     {
         if (_head is not null) throw new HeadIsNotNullException();
