@@ -164,6 +164,29 @@ public class MyList<T>
         return index;
     }
     
+    public T Delete(int index)
+    {
+        if (index < 0 || _head is null) throw new IndexOfElementOutOfRangeException();
+        
+        int counter = 0;
+        Node<T> current = _head!;
+        Node<T> previous = _tail!;
+
+        while (counter != index)
+        {
+            previous = current;
+            current = current.Next!;
+            counter++;
+
+            bool isCompletedLoop = current == _head && counter != 0;
+            if (isCompletedLoop) throw new IndexOfElementOutOfRangeException();
+        }
+        
+        DeleteNode(previous, current);
+        
+        return current.Value;
+    }
+    
     private void AddHeadIfNull(T value)
     {
         if (_head is not null) throw new HeadIsNotNullException();
@@ -173,5 +196,27 @@ public class MyList<T>
 
         _head = node;
         _tail = node;
+    }
+    
+    private void DeleteNode(Node<T> previous, Node<T> node)
+    {
+        bool isHead = node == _head;
+        bool isTail = node == _tail;
+        
+        previous.SetNext(node.Next!);
+        
+        if (isHead && isTail)
+        {
+            _head = null;
+            _tail = null;
+        }
+        else if(isHead)
+        {
+            _head = node.Next!;
+        }
+        else if (isTail)
+        {
+            _tail = previous;
+        }
     }
 }
