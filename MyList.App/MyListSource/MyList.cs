@@ -106,7 +106,31 @@ public class MyList<T>
     
     public void DeleteAll(T value)
     {
-        throw new Exception();
+        int counter = 0;
+        int freeIndex = 0;
+
+        for (int i = 0; i < _size; i++)
+        {
+            T item = _items[i];
+
+            if (EqualityComparer<T>.Default.Equals(item, value))
+            {
+                counter++;
+                continue;
+            }
+
+            if (i > freeIndex)
+            {
+                _items[freeIndex] = item;
+            }
+
+            freeIndex++;
+        }
+
+        ClearArray(freeIndex, counter);
+        _size -= counter;
+        
+        TryReduceCapacity();
     }
     
     public void Clear()
@@ -174,5 +198,15 @@ public class MyList<T>
         }
 
         _items = newItems;
+    }
+    
+    private void ClearArray(int startIndex, int length)
+    {
+        int limit = startIndex + length;
+
+        for (int i = startIndex; i < limit && i < _items.Length; i++)
+        {
+            _items[i] = default!;
+        }
     }
 }
