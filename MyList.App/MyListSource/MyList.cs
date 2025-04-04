@@ -32,6 +32,25 @@ public class MyList<T>
         return counter;
     }
     
+    public T Get(int index)
+    {
+        if (index < 0 || _head is null) throw new IndexOfElementOutOfRangeException();
+
+        int counter = 0;
+        Node<T> current = _head;
+
+        while (counter != index)
+        {
+            current = current.Next!;
+            counter++;
+
+            bool isCompletedLoop = current == _head && counter != 0;
+            if (isCompletedLoop) throw new IndexOfElementOutOfRangeException();
+        }
+
+        return current.Value;
+    }
+    
     public void Append(T value)
     {
         if (_head is null)
