@@ -6,13 +6,13 @@ public class MyList<T>
 {
     private const int DefaultCapacity = 4;
 
-    private T[] items = new T[DefaultCapacity];
-    private int size = 0;
+    private T[] _items = new T[DefaultCapacity];
+    private int _size = 0;
     
     public MyList(params T[] values)
     {
-        items = values;
-        size = values.Length;
+        _items = values;
+        _size = values.Length;
     }
 
     public MyList()
@@ -21,19 +21,22 @@ public class MyList<T>
     
     public int Length()
     {
-        return size;
+        return _size;
     }
     
     public T Get(int index)
     {
-        if (index < 0 || index >= size) throw new IndexOfElementOutOfRangeException();
+        if (index < 0 || index >= _size) throw new IndexOfElementOutOfRangeException();
 
-        return items[index];
+        return _items[index];
     }
     
     public void Append(T value)
     {
-        throw new Exception();
+        TryIncreaseCapacity();
+
+        _items[_size] = value;
+        _size++;
     }
     
     public void Insert(T value, int index)
@@ -84,5 +87,33 @@ public class MyList<T>
     public void Extend(MyList<T> list)
     {
         throw new Exception();
+    }
+    
+    private void TryIncreaseCapacity()
+    {
+        if (IsFull())
+        {
+            int capacity = _size * 2;
+            ChangeCapacity(capacity);
+        }
+    }
+    
+    private bool IsFull()
+    {
+        return _size == _items.Length;
+    }
+    
+    private void ChangeCapacity(int capacity)
+    {
+        if (capacity < _size) return;
+        
+        T[] newItems = new T[capacity];
+
+        for (int i = 0; i < _size; i++)
+        {
+            newItems[i] = _items[i];
+        }
+
+        _items = newItems;
     }
 }
