@@ -41,7 +41,17 @@ public class MyList<T>
     
     public void Insert(T value, int index)
     {
-        throw new Exception();
+        if (index < 0 || index > _size) throw new IndexOfElementOutOfRangeException();
+
+        TryIncreaseCapacity();
+
+        for (int i = _size - 1; i >= index; i--)
+        {
+            _items[i + 1] = _items[i];
+        }
+
+        _items[index] = value;
+        _size++;
     }
     
     public int FindFirst(T value)
