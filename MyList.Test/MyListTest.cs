@@ -214,4 +214,51 @@ public class MyListTest
         list.FindLast('b').Should().Be(-1);
         list.FindFirst('c').Should().Be(-1);
     }
+    
+    [Fact]
+    public void Reverse_Should_ReverseElementsInList_When_ListHasEvenNumberOfElements()
+    {
+        MyList<char> list = new MyList<char>('1', '2', '3', '4');
+
+        list.Reverse();
+
+        list.Length().Should().Be(4);
+        list.Get(0).Should().Be('4');
+        list.Get(1).Should().Be('3');
+        list.Get(2).Should().Be('2');
+        list.Get(3).Should().Be('1');
+    }
+
+    [Fact]
+    public void Reverse_Should_ReverseElementsInList_When_ListHasOddNumberOfElements()
+    {
+        MyList<char> list = new MyList<char>('1', '2', '3');
+        
+        list.Reverse();
+        
+        list.Length().Should().Be(3);
+        list.Get(0).Should().Be('3');
+        list.Get(1).Should().Be('2');
+        list.Get(2).Should().Be('1');
+    }
+    
+    [Fact]
+    public void ToArray_Should_ReturnListConvertedToArray()
+    {
+        MyList<char> list = new MyList<char>('a', 'b','c');
+        
+        char[] array = list.ToArray();
+        
+        array.Should().BeEquivalentTo(['a', 'b', 'c']);
+    }
+
+    [Fact]
+    public void ToArray_Should_ReturnEmptyArray_When_ListIsEmpty()
+    {
+        MyList<char> list = new MyList<char>();
+        
+        char[] array = list.ToArray();
+
+        array.Should().BeEmpty();
+    }
 }
