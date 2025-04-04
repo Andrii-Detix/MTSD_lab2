@@ -120,7 +120,9 @@ public class MyList<T>
     
     public int FindFirst(T value)
     {
-        if (_head is null) return -1;
+        const int badIndex = -1;
+        
+        if (_head is null) return badIndex;
 
         int index = 0;
         Node<T> current = _head;
@@ -131,7 +133,7 @@ public class MyList<T>
             index++;
 
             bool isCompletedLoop = current == _head && index != 0;
-            if (isCompletedLoop) return -1;
+            if (isCompletedLoop) return badIndex;
         }
         
         return index;
