@@ -1,4 +1,6 @@
-﻿namespace MyList.App.MyListSource;
+﻿using MyList.App.MyListSource.Exceptions;
+
+namespace MyList.App.MyListSource;
 
 public class MyList<T>
 {
@@ -15,17 +17,18 @@ public class MyList<T>
 
     public MyList()
     {
-        
     }
     
     public int Length()
     {
-        throw new Exception();
+        return size;
     }
     
     public T Get(int index)
     {
-        throw new Exception();
+        if (index < 0 || index >= size) throw new IndexOfElementOutOfRangeException();
+
+        return items[index];
     }
     
     public void Append(T value)
