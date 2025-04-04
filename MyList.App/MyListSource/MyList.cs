@@ -1,16 +1,21 @@
-﻿using MyList.App.MyListSource.Exceptions;
-
-namespace MyList.App.MyListSource;
+﻿namespace MyList.App.MyListSource;
 
 public class MyList<T>
 {
+    private const int DefaultCapacity = 4;
+
+    private T[] items = new T[DefaultCapacity];
+    private int size = 0;
+    
     public MyList(params T[] values)
     {
-        
+        items = values;
+        size = values.Length;
     }
 
     public MyList()
     {
+        
     }
     
     public int Length()
