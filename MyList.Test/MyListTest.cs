@@ -103,4 +103,80 @@ public class MyListTest
         insertByIndexHigherThanSizeOfList.Should().Throw<IndexOfElementOutOfRangeException>();
         insertByIndexLowerThanZero.Should().Throw<IndexOfElementOutOfRangeException>();
     }
+    
+    
+    [Fact]
+    public void Delete_Should_DeleteElementFromTheListByIndexAndReturnValue_When_IndexIsValid()
+    {
+        MyList<char> list = new MyList<char>('a', 'b', 'c');
+
+
+        char deleted = list.Delete(1);
+
+        deleted.Should().Be('b');
+        list.Length().Should().Be(2);
+        list.Get(0).Should().Be('a');
+        list.Get(1).Should().Be('c');
+
+
+        deleted = list.Delete(1);
+
+        deleted.Should().Be('c');
+        list.Length().Should().Be(1);
+        list.Get(0).Should().Be('a');
+
+
+        deleted = list.Delete(0);
+
+        deleted.Should().Be('a');
+        list.Length().Should().Be(0);
+    }
+
+    [Fact]
+    public void Delete_Should_ThrowIndexofElementOutOfRangeException_When_IndexIsInvalid()
+    {
+        MyList<char> list = new MyList<char>('a', 'b', 'c');
+
+        Action deleteByIndexHigherThanSizeOfList = () => list.Delete(5);
+        Action deleteByIndexLowerThanZero = () => list.Delete(-1);
+
+        deleteByIndexHigherThanSizeOfList.Should().Throw<IndexOfElementOutOfRangeException>();
+        deleteByIndexLowerThanZero.Should().Throw<IndexOfElementOutOfRangeException>();
+    }
+
+    [Fact]
+    public void FindFirst_Should_ReturnIndexOfFirstElementWithGivenValue_When_ListHasElement()
+    {
+        MyList<char> list = new MyList<char>('a', 'a', 'b', 'a', 'b', 'c', 'a');
+
+        list.FindFirst('a').Should().Be(0);
+        list.FindFirst('b').Should().Be(2);
+        list.FindFirst('c').Should().Be(5);
+    }
+
+    [Fact]
+    public void FindFirst_Should_ReturnMinusOne_When_ListHasNotElementWithGivenValue()
+    {
+        MyList<char> list = new MyList<char>('a', 'a', 'b', 'a', 'b', 'c', 'a');
+
+        list.FindFirst('1').Should().Be(-1);
+    }
+
+    [Fact]
+    public void FindLast_Should_ReturnLastElementWithGivenValue_When_ListHasElement()
+    {
+        MyList<char> list = new MyList<char>('a', 'a', 'b', 'a', 'b', 'c', 'a');
+
+        list.FindLast('a').Should().Be(6);
+        list.FindLast('b').Should().Be(4);
+        list.FindLast('c').Should().Be(5);
+    }
+
+    [Fact]
+    public void FindLast_Should_ReturnMinusOne_When_ListHasNotElementWithGivenValue()
+    {
+        MyList<char> list = new MyList<char>('a', 'a', 'b', 'a', 'b', 'c', 'a');
+
+        list.FindFirst('1').Should().Be(-1);
+    }
 }
