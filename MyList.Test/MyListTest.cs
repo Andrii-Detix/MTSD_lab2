@@ -104,7 +104,6 @@ public class MyListTest
         insertByIndexLowerThanZero.Should().Throw<IndexOfElementOutOfRangeException>();
     }
     
-    
     [Fact]
     public void Delete_Should_DeleteElementFromTheListByIndexAndReturnValue_When_IndexIsValid()
     {
@@ -260,5 +259,139 @@ public class MyListTest
         char[] array = list.ToArray();
 
         array.Should().BeEmpty();
+    }
+    
+        [Fact]
+    public void Clone_Should_ReturnCloneOfListOfElements()
+    {
+        MyList<char> list = new MyList<char>('a', 'a', 'b', 'c');
+
+        MyList<char> cloned = list.Clone();
+
+        cloned.Length().Should().Be(list.Length());
+        cloned.Get(0).Should().Be(list.Get(0));
+        cloned.Get(1).Should().Be(list.Get(1));
+        cloned.Get(2).Should().Be(list.Get(2));
+        cloned.Get(3).Should().Be(list.Get(3));
+    }
+
+    [Fact]
+    public void Clone_Should_Not_ClonedListEffectOriginalOne()
+    {
+        MyList<char> list = new MyList<char>('a', 'a', 'b');
+
+        MyList<char> cloned = list.Clone();
+        cloned.DeleteAll('a');
+        cloned.Append('d');
+
+        cloned.Length().Should().Be(2);
+        cloned.Get(0).Should().Be('b');
+        cloned.Get(1).Should().Be('d');
+        list.Length().Should().Be(3);
+        list.Get(0).Should().Be('a');
+        list.Get(1).Should().Be('a');
+        list.Get(2).Should().Be('b');
+    }
+
+    [Fact]
+    public void Clone_Should_Not_OriginalListEffectClonedOne()
+    {
+        MyList<char> list = new MyList<char>('a', 'a', 'b');
+
+        MyList<char> cloned = list.Clone();
+        list.DeleteAll('a');
+        list.Append('d');
+
+        list.Length().Should().Be(2);
+        list.Get(0).Should().Be('b');
+        list.Get(1).Should().Be('d');
+        cloned.Length().Should().Be(3);
+        cloned.Get(0).Should().Be('a');
+        cloned.Get(1).Should().Be('a');
+        cloned.Get(2).Should().Be('b');
+    }
+
+    [Fact]
+    public void Extend_Should_AddElementsToFirstListFromSecondOne()
+    {
+        MyList<char> first = new MyList<char>('a', 'b');
+        MyList<char> second = new MyList<char>('c');
+
+        first.Extend(second);
+
+        first.Length().Should().Be(3);
+        first.Get(0).Should().Be('a');
+        first.Get(1).Should().Be('b');
+        first.Get(2).Should().Be('c');
+    }
+
+    [Fact]
+    public void Extend_Should_AddElementsToFirstListFromSecond_When_FirstListIsEmpty()
+    {
+        MyList<char> first = new MyList<char>();
+        MyList<char> second = new MyList<char>('a', 'b');
+
+        first.Extend(second);
+
+        first.Length().Should().Be(2);
+        first.Get(0).Should().Be('a');
+        first.Get(1).Should().Be('b');
+    }
+
+    [Fact]
+    public void Extend_Should_FirstListStayUnchanged_When_SecondListIsEmpty()
+    {
+        MyList<char> first = new MyList<char>('a', 'b');
+        MyList<char> second = new MyList<char>();
+
+        first.Extend(second);
+        Action getElementFromFirstListByIndexTwo = () => first.Get(2);
+
+        first.Length().Should().Be(2);
+        first.Get(0).Should().Be('a');
+        first.Get(1).Should().Be('b');
+        getElementFromFirstListByIndexTwo.Should().Throw<IndexOfElementOutOfRangeException>();
+    }
+
+    [Fact]
+    public void Extend_Should_Not_ExtendedListEffectOriginalOne()
+    {
+        MyList<char> first = new MyList<char>('a');
+        MyList<char> second = new MyList<char>('b');
+
+        first.Extend(second);
+        first.Delete(0);
+        first.Append('c');
+        first.Append('c');
+        Action getElementFromSecondListByIndexThree = () => second.Get(3);
+
+        first.Length().Should().Be(3);
+        first.Get(0).Should().Be('b');
+        first.Get(1).Should().Be('c');
+        first.Get(2).Should().Be('c');
+        second.Length().Should().Be(1);
+        second.Get(0).Should().Be('b');
+        getElementFromSecondListByIndexThree.Should().Throw<IndexOfElementOutOfRangeException>();
+    }
+
+    [Fact]
+    public void Extend_Should_Not_SecondListEffectExtendedOne()
+    {
+        MyList<char> first = new MyList<char>('a');
+        MyList<char> second = new MyList<char>('b');
+
+        first.Extend(second);
+        second.Delete(0);
+        second.Append('c');
+        second.Append('c');
+        Action getElementFromFirstListByIndexTwo = () => first.Get(2);
+
+        first.Length().Should().Be(2);
+        first.Get(0).Should().Be('a');
+        first.Get(1).Should().Be('b');
+        second.Length().Should().Be(2);
+        second.Get(0).Should().Be('c');
+        second.Get(1).Should().Be('c');
+        getElementFromFirstListByIndexTwo.Should().Throw<IndexOfElementOutOfRangeException>();
     }
 }
