@@ -153,12 +153,22 @@ public class MyList<T>
     
     public void Reverse()
     {
-        throw new Exception();
+        int middleSeparator = _size / 2;
+
+        for (int i = 0; i < middleSeparator; i++)
+        {
+            T itemFromHead = _items[i];
+            int indexFromTail = _size - i - 1;
+
+            _items[i] = _items[indexFromTail];
+            _items[indexFromTail] = itemFromHead;
+        }
     }
     
     public MyList<T> Clone()
     {
-        throw new Exception();
+        T[] itemsArray = ToArray();
+        return new MyList<T>(itemsArray);
     }
     
     public void Extend(MyList<T> list)
